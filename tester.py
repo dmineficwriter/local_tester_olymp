@@ -1,4 +1,5 @@
 import os
+from re import sub
 import subprocess
 import time
 
@@ -24,29 +25,54 @@ def test_problem(problem):
     wrong_tests = []
 
     code_lang = check_lang(solution)
+    if code_lang == 'exe':
+      continue
+    print('Now testing ' + solution)
     if code_lang == 'cpp':
       os.chdir(problem + '/solutions')
-      print('Компилирование программы...')
-      os.system('g++ ' + solution + ' -o ' + solution[:-4])
+      print('Compilating...')
+      try:
+        subprocess.check_output('g++ ' + solution + ' -o ' + solution[:-4])
+      except subprocess.CalledProcessError:
+        print('Compilation error\nFinished testing ' + solution + '\n\n')
+        os.chdir(ROOT_DIR)
+        continue
       os.chdir(ROOT_DIR)
-    elif code_lang == 'exe':
-      continue
 
     for i in range(len(tests) // 2):
       output = ''
       output_fixed = output
 
       if code_lang == 'py':
-        output = subprocess.check_output(
-          ['python', problem + '/solutions/' + solution],
-          stdin=open(problem + '/tests/' + tests[i * 2], 'rb')
-        ).decode()
-        output_fixed = compare_format(output)
-        output = output[:-2]
+        try:
+          output = subprocess.check_output(
+            ['python', problem + '/solutions/' + solution],
+            stdin=open(problem + '/tests/' + tests[i * 2], 'rb'),
+            timeout=2.0
+          ).decode()
+          output_fixed = compare_format(output)
+          output = output[:-2]
+        except subprocess.CalledProcessError:
+          print(str(i + 1) + ':    ...RE\n')
+          continue
+        except subprocess.TimeoutExpired:
+          print(str(i + 1) + ':    ...TLE\n')
+          continue
       elif code_lang == 'cpp':
         # print(os.getcwd())
-        output = subprocess.check_output(problem + '/solutions/' + solution[:-4] + '.exe', stdin=open(problem + '/tests/' + tests[i * 2], 'rb')).decode()
-        output_fixed = compare_format(output)
+        try:
+          output = subprocess.check_output(
+            problem + '/solutions/' + solution[:-4] + '.exe',
+            stdin=open(problem + '/tests/' + tests[i * 2], 'rb',),
+            timeout=2.0
+          ).decode()
+          output_fixed = compare_format(output)
+        except subprocess.CalledProcessError:
+          print(str(i + 1) + ':    ...RE\n')
+          continue
+        except subprocess.TimeoutExpired:
+          print(str(i + 1) + ':    ...TLE\n')
+          continue
 
       # print(output)
       with open(problem + '/tests/' + tests[i * 2 + 1], 'rb') as ans_file:
@@ -60,18 +86,16 @@ def test_problem(problem):
           wrong_tests.append(i + 1)
           print('    ...WA\n')
 
-    print('Завершено тестирование ' + solution + ', пройдено ' + str(count_right) + '/' + str(count_tests) + ' тестов')
+    print('Finished testing ' + solution + ', passed ' + str(count_right) + '/' + str(count_tests) + ' tests')
     if (len(wrong_tests) > 0):
-      print('Неверные тесты: ')
-      for wrong in wrong_tests:
-        print(wrong, end=', ')
-      print('\n\n')
+      print('Wrong tests: ')
+      print(*wrong_tests, sep=', ', end='\n\n')
 
 def main():
-  problem = input('Какую задачу проверить?\n')
+  problem = input('Which problem to test?\n')
   while problem <= 'Z' and problem >= 'A':
     test_problem(problem)
-    problem = input('Еще одну?\n')
+    problem = input('More?\n')
 
 main()
 os.system('pause')
