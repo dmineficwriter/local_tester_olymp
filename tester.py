@@ -37,12 +37,20 @@ def test_problem(problem):
       output_fixed = output
 
       if code_lang == 'py':
-        output = subprocess.check_output(
-          ['python', problem + '/solutions/' + solution],
-          stdin=open(problem + '/tests/' + tests[i * 2], 'rb')
-        ).decode()
-        output_fixed = compare_format(output)
-        output = output[:-2]
+        try:
+          output = subprocess.check_output(
+            ['python', problem + '/solutions/' + solution],
+            stdin=open(problem + '/tests/' + tests[i * 2], 'rb'),
+            timeout=2.0
+          ).decode()
+          output_fixed = compare_format(output)
+          output = output[:-2]
+        except subprocess.CalledProcessError:
+          print(str(i + 1) + ':    ...RE\n')
+          continue
+        except subprocess.TimeoutExpired:
+          print(str(i + 1) + ':    ...TLE\n')
+          continue
       elif code_lang == 'cpp':
         # print(os.getcwd())
         output = subprocess.check_output(problem + '/solutions/' + solution[:-4] + '.exe', stdin=open(problem + '/tests/' + tests[i * 2], 'rb')).decode()
