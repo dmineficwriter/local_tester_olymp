@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <h1 class="problem__header">
+    Задача A. Починка блюдца
+  </h1>
+  <div class="problem__text">
+    <p class="problem__text-par">
+      Придя в кабинет, уставший Сергей Викторович захотел выпить свой любимый чай. Для этого ему нужно было достать с высокой полки самое красивое блюдце, которое представляет собой клетчатое поле N × N . Но, так как Сергей Викторович не очень аккуратен, он блюдце разбил.
+    </p>
+    <p class="problem__text-par">
+      В спешке Сергей Викторович начал думать, как же починить столь ценную вещь. И тогда он заметил, что блюдце распалось ровно на клетчатые квадраты K × K! Более того, он обнаружил, что N делится на K без остатка.
+    </p>
+    <p class="problem__text-par">
+      Восстановив исходное блюдце из кусочков, Сергей Викторович понял, что ему также нужно купить клей, чтобы склеить все соприкасающиеся кусочки в исходное клетчатое поле N × N . Он тут же посчитал, что, для того чтобы проклеить границу между двумя соприкасающимися клетками длины 1, необходима ровно одна банка клея.
+    </p>
+    <p class="problem__text-par">
+      Помогите Сергею Викторовичу посчитать, сколько банок клея ему нужно купить, чтобы склеить его любимое блюдце.
+    </p>
+  </div>
+
+  <h2 class="problem__secheader">Формат входных данных</h2>
+  <p class="problem__text-par">
+    В первой строке входных данных записано одно целое число N (1 <= N <= 104) – размер квадратного блюдца.
+  </p>
+  <p class="problem__text-par">
+    Во второй строке записано одно целое число K (1 <= K <= N , N делится на K без остатка) – размер квадратного осколка блюдца.
+  </p>
+
+  <h2 class="problem__secheader">Формат выходных данных</h2>
+  <p class="problem__text-par">
+    В единственной строке выведите одно число – количество банок клея, которые Сергею Викторовичу понадобится купить, чтобы починить блюдце.
+  </p>
+  <p class="problem__text-par">
+    Если на самом деле блюдце не разбилось, и Сергей Викторович зря паниковал, выведите число 0.
+  </p>
+
+  <h2 class="problem__secheader">Примеры</h2>
+  <table class="problem__examples">
+    <thead class="problem__examples-header">
+      <th class="problem__examples-header_text">ввод</th>
+      <th class="problem__examples-header_text">вывод</th>
+    </thead>
+    <tbody class="problem__examples-body">
+      <tr class="problem__examples-line">
+        <td class="problem__examples-elem">2<br>1</td>
+        <td class="problem__examples-elem">4</td>
+      </tr>
+      <tr class="problem__examples-line">
+        <td class="problem__examples-elem">3<br>3</td>
+        <td class="problem__examples-elem">0</td>
+      </tr>
+    </tbody>
+  </table>
+  <form action="http://127.0.0.1:5000/problems/problem_set_day_1/A" method="POST" enctype="multipart/form-data">
+    <input type="file" name="solution">
+    <input type="submit">
+  </form>
+</body>
+</html>
