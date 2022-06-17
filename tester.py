@@ -25,7 +25,7 @@ def test_problem(problem, solution):
       subprocess.check_output('g++ ' + solution + ' -o ' + solution[:-4])
     except subprocess.CalledProcessError: # Catching compilation error
       os.chdir(ROOT_DIR)
-      testing_result += {'1' : 'Compilation error'}
+      testing_result['1'] = 'CE'
       return testing_result
     os.chdir(ROOT_DIR)
 
@@ -43,10 +43,10 @@ def test_problem(problem, solution):
         output_fixed = compare_format(output)
         output = output[:-2]
       except subprocess.CalledProcessError: # Catching runtime
-        testing_result += {str(i + 1) : 'Runtime error'}
+        testing_result[str(i + 1)] = 'RE'
         continue
       except subprocess.TimeoutExpired: # Catching TLE
-        testing_result += {str(i + 1) : 'Time limit excedeed'}
+        testing_result[str(i + 1)] = 'TLE'
         continue
 
     elif code_lang == 'cpp': # Compiling .cpp solution
@@ -58,18 +58,18 @@ def test_problem(problem, solution):
         ).decode()
         output_fixed = compare_format(output)
       except subprocess.CalledProcessError: # Catching runtime
-        testing_result += {str(i + 1) : 'Runtime error'}
+        testing_result[str(i + 1)] = 'RE'
         continue
       except subprocess.TimeoutExpired: # Catching TLE
-        testing_result += {str(i + 1) : 'Time limit excedeed'}
+        testing_result[str(i + 1)] = 'TLE'
         continue
 
     with open(problem + '/tests/' + tests[i * 2 + 1], 'rb') as ans_file: # Comparing to correct answer
       ans = compare_format(ans_file.read().decode())
       if (output_fixed == ans):
-        testing_result += {str(i + 1) : 'OK'}
+        testing_result[str(i + 1)] = 'OK'
         count_right += 1
       else:
-        testing_result += {str(i + 1) : 'Wrong answer'}
+        testing_result[str(i + 1)] = 'WA'
 
-    return testing_result, count_right
+  return testing_result, count_right

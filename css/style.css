@@ -38,6 +38,12 @@ img {
   max-width: 90%;
 }
 
+.container {
+  max-width: 80%;
+  margin: 0 auto;
+  padding: 30px 0;
+}
+
 .flex {
   display: flex;
 }
@@ -48,4 +54,39 @@ img {
   border: none;
   background-color: transparent;
   cursor: pointer;
+}
+
+/* problem */
+.problem__header {
+  margin-bottom: 20px;
+}
+
+.problem__text-par {
+  margin-bottom: 10px;
+}
+
+.problem__secheader {
+  margin-bottom: 15px;
+  padding-top: 5px;
+}
+
+.problem__examples {
+  margin-bottom: 10px;
+  width: 80%;
+  border-collapse: collapse;
+}
+
+.problem__examples-header_text {
+  width: 50%;
+  padding: 10px 20px;
+  text-align: left;
+  border: 1px solid gray;
+}
+
+.problem__examples-elem {
+  width: 50%;
+  padding: 10px 20px;
+  vertical-align: top;
+  white-space: pre;
+  border: 1px solid gray;
 }
