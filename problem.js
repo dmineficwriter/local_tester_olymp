@@ -1,6 +1,5 @@
 (() => {
   async function getProblem(section_id, problem_id) {
-    console.log('i am in getProblem');
     problem = await fetch(`http://127.0.0.1:5000/problems/${section_id}/${problem_id}`, {
       method: 'GET',
       // mode: 'no-cors'
@@ -60,15 +59,14 @@
       problemExamplesTableBodyOutput.classList.add('problem__examples-elem');
 
       let problemExampleInputText = '', problemExampleOutputText = '';
+
+      // console.log(problemExamples);
+
       for (let j = 0; j < problemExamples[i][0].length; j++) {
-        problemExampleInputText += problemExamples[i][0][j];
-        if (j < problemExamples[0].length - 1)
-          problemExampleInputText += '\n';
+        problemExampleInputText += problemExamples[i][0][j] + '\n';
       }
       for (let j = 0; j < problemExamples[i][1].length; j++) {
-        problemExampleOutputText += problemExamples[i][1][j];
-        if (j < problemExamples[1].length - 1)
-          problemExampleOutputText += '\n';
+        problemExampleOutputText += problemExamples[i][1][j] + '\n';
       }
 
       problemExamplesTableBodyInput.textContent = problemExampleInputText;
@@ -125,20 +123,74 @@
     solution.append('solution', file);
     solution.append('name', file.name);
 
-    let abortController = new AbortController();
-    window.onbeforeunload = () => {
-      abortController.abort();
-    };
-
+    // console.log(file, section_id, problem_id);
     response = await fetch(`http://127.0.0.1:5000/problems/${section_id}/${problem_id}`, {
       method: 'POST',
       body: solution,
-      signal : abortController.signal
     });
     return response.json();
   }
 
-  async function createSendForm(section_id, problem_id) {
+  function createTableResult(testResult, passed) {
+    let testResultWrapper = document.createElement('div');
+    testResultWrapper.classList.add('test-result');
+
+    let testNumberPassed = document.createElement('h3');
+    testNumberPassed.classList.add('test-result__passed');
+    testNumberPassed.textContent = 'Пройдено тестов: ' + String(passed);
+
+    let testResultTable = document.createElement('table');
+    let testResultTableHead = document.createElement('thead');
+    let testResultTableBody = document.createElement('tbody');
+
+    testResultTable.classList.add('test-result__table');
+    testResultTableHead.classList.add('test-result__table-header');
+    testResultTableBody.classList.add('test-result__table-body');
+
+    let testResultTableHeadTestNo = document.createElement('th');
+    let testResultTableHeadResult = document.createElement('th');
+
+    testResultTableHeadTestNo.classList.add('test-result__table-header_text');
+    testResultTableHeadResult.classList.add('test-result__table-header_text');
+
+    testResultTableHeadTestNo.textContent = 'Номер теста';
+    testResultTableHeadResult.textContent = 'Результат';
+
+    testResultTableHead.append(testResultTableHeadTestNo);
+    testResultTableHead.append(testResultTableHeadResult);
+
+    // console.log(testResult);
+    for (let i = 0; i < testResult.length; i++) {
+      let testResultTableBodyLine = document.createElement('tr');
+      let testResultTableBodyTestNo = document.createElement('td');
+      let testResultTableBodyResult = document.createElement('td');
+
+      testResultTableBodyLine.classList.add('test-result__table-line');
+      testResultTableBodyTestNo.classList.add('test-result__table-elem');
+      testResultTableBodyResult.classList.add('test-result__table-elem');
+
+      // let problemExampleInputText = '', problemExampleOutputText = '';
+
+      testResultTableBodyTestNo.textContent = String(i + 1);
+      testResultTableBodyResult.textContent = testResult[i];
+
+      testResultTableBodyLine.append(testResultTableBodyTestNo);
+      testResultTableBodyLine.append(testResultTableBodyResult);
+
+      testResultTableBody.append(testResultTableBodyLine);
+      console.log(testResultTableBodyLine);
+    }
+
+    testResultTable.append(testResultTableHead);
+    testResultTable.append(testResultTableBody);
+
+    testResultWrapper.append(testNumberPassed);
+    testResultWrapper.append(testResultTable);
+
+    return testResultWrapper;
+  }
+
+  async function createSendForm(container, section_id, problem_id) {
     let problemSendForm = document.createElement('form');
     let problemLoadFile = document.createElement('input');
     let problemSendBtn = document.createElement('button');
@@ -154,20 +206,16 @@
     problemSendForm.append(problemLoadFile);
     problemSendForm.append(problemSendBtn);
 
-    problemSendForm.onsubmit = 'return false';
-
-    problemSendForm.addEventListener('submit', async e => {
-      e.preventDefault();
-    });
-
     problemSendBtn.addEventListener('click', async e => {
       e.preventDefault();
       if (problemLoadFile.files.length == 0) {
         alert('choose a file');
       }
       else {
+        // console.log(section_id, problem_id);
         testResult = await getTestResult(problemLoadFile.files[0], section_id, problem_id);
-        console.log(testResult);
+        // console.log(testResult, testResult[0], testResult[1]);
+        container.append(createTableResult(testResult[0], testResult[1]));
       }
     });
 
@@ -182,9 +230,12 @@
     let problem = await createProblem(section_id, problem_id);
     container.append(problem);
 
-    let problemSendForm = await createSendForm(section_id, problem_id);
+    let problemSendForm = await createSendForm(container, section_id, problem_id);
     container.append(problemSendForm);
   }
 
-  createProblemPage('problem_set_day_1', 'A');
+  let section_id = (new URLSearchParams(window.location.search)).get('section');
+  let problem_id = (new URLSearchParams(window.location.search)).get('problem');
+  console.log(section_id, problem_id);
+  createProblemPage(section_id, problem_id);
 })();
