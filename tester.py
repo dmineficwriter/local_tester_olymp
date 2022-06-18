@@ -13,7 +13,7 @@ def check_lang(file): # Recognizing lang of the solution
   return file[-1]
 
 def test_problem(problem, solution):
-  testing_result = {}
+  testing_result = []
   tests = os.listdir(problem + '/tests/')
   count_right = 0
   count_tests = len(tests) // 2
@@ -25,7 +25,7 @@ def test_problem(problem, solution):
       subprocess.check_output('g++ ' + solution + ' -o ' + solution[:-4])
     except subprocess.CalledProcessError: # Catching compilation error
       os.chdir(ROOT_DIR)
-      testing_result['1'] = 'CE'
+      testing_result += ['CE']
       return testing_result
     os.chdir(ROOT_DIR)
 
@@ -43,10 +43,10 @@ def test_problem(problem, solution):
         output_fixed = compare_format(output)
         output = output[:-2]
       except subprocess.CalledProcessError: # Catching runtime
-        testing_result[str(i + 1)] = 'RE'
+        testing_result += ['RE']
         continue
       except subprocess.TimeoutExpired: # Catching TLE
-        testing_result[str(i + 1)] = 'TLE'
+        testing_result += ['TLE']
         continue
 
     elif code_lang == 'cpp': # Compiling .cpp solution
@@ -58,18 +58,18 @@ def test_problem(problem, solution):
         ).decode()
         output_fixed = compare_format(output)
       except subprocess.CalledProcessError: # Catching runtime
-        testing_result[str(i + 1)] = 'RE'
+        testing_result += ['RE']
         continue
       except subprocess.TimeoutExpired: # Catching TLE
-        testing_result[str(i + 1)] = 'TLE'
+        testing_result += ['TLE']
         continue
 
     with open(problem + '/tests/' + tests[i * 2 + 1], 'rb') as ans_file: # Comparing to correct answer
       ans = compare_format(ans_file.read().decode())
       if (output_fixed == ans):
-        testing_result[str(i + 1)] = 'OK'
+        testing_result += ['OK']
         count_right += 1
       else:
-        testing_result[str(i + 1)] = 'WA'
+        testing_result += ['WA']
 
   return testing_result, count_right

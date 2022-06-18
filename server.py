@@ -3,7 +3,7 @@ import sys
 import tester
 import codecs
 from flask import Flask, flash, jsonify, request, render_template, url_for
-from flask_cors import cross_origin, CORS
+from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
@@ -36,13 +36,13 @@ def parse_problem_examples(problem_lines, stop_lines, i):
       i += 1
     i += 1
     output_data = []
+    # print('now going to out,', i)
     while i < len(problem_lines) and problem_lines[i] not in stop_lines and problem_lines[i] not in INP:
       # print('output search', i, len(problem_lines))
       output_data.append(problem_lines[i])
       i += 1
     examples_list.append([input_data, output_data])
   return i, examples_list
-
 
 def parse_problem(problem):
   problem_lines = problem.split('\r\n')[:-1]
@@ -58,8 +58,28 @@ def parse_problem(problem):
 
   if i + 1 < len(problem_lines):
     i, problem_parsed['problem_additional'] = parse_problem_text(problem_lines, ('Пояснение', 'Пояснение к примерам', 'Пояснения к примерам'), i + 1)
+  else:
+    problem_parsed['problem_additional'] = []
 
   return problem_parsed
+
+@app.route('/problems/', methods=['GET'])
+def get_sections():
+  if request.method == 'GET':
+    sections = os.listdir('problems/')
+    response = jsonify(sections)
+    return response
+  else:
+    return 'unallowed method'
+
+@app.route('/problems/<section_id>/', methods=['GET'])
+def get_problems(section_id):
+  if request.method == 'GET':
+    problems = os.listdir(f'problems/{section_id}/')
+    response = jsonify(problems)
+    return response
+  else:
+    return 'unallowed method'
 
 @app.route('/problems/<section_id>/<problem_id>', methods=['GET', 'POST'])
 def get_solution(section_id, problem_id):

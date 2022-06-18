@@ -90,3 +90,30 @@ img {
   white-space: pre;
   border: 1px solid gray;
 }
+
+.problem__submit {
+  margin-bottom: 30px;
+}
+
+/* test result */
+
+.test-result__table {
+  margin-bottom: 10px;
+  width: 80%;
+  border-collapse: collapse;
+}
+
+.test-result__table-header_text {
+  width: 50%;
+  padding: 10px 20px;
+  text-align: left;
+  border: 1px solid gray;
+}
+
+.test-result__table-elem {
+  width: 50%;
+  padding: 10px 20px;
+  vertical-align: top;
+  white-space: pre;
+  border: 1px solid gray;
+}
